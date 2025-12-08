@@ -27,6 +27,16 @@ namespace SlotMathModule.GameLogic.Games
             Variants = new int[5] { 10, 10, 10, 10, 10 };
         }
 
+        protected override void CreateSymbol()
+        {
+            // Добавляем символы для игры (базовый символ "-" уже добавлен в конструкторе Game)
+            AddSymbol(new Symbol("A", new int[5] { 0, 0, 10, 50, 200 }));
+            AddSymbol(new Symbol("K", new int[5] { 0, 0, 8, 40, 150 }));
+            AddSymbol(new Symbol("Q", new int[5] { 0, 0, 6, 30, 100 }));
+            AddSymbol(new Symbol("J", new int[5] { 0, 0, 4, 20, 80 }));
+            AddSymbol(new Symbol("10", new int[5] { 0, 0, 2, 10, 50 }));
+        }
+
         public override List<Map> GetMapByFeedItem(FeedItem feedItem_, int lineCount_, int bet_)
         {
             List<Map> res = new List<Map>();

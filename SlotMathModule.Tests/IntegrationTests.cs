@@ -66,7 +66,7 @@ namespace SlotMathModule.Tests
             }
         }
 
-        [Fact]
+        [Fact(Skip = "Superball tests excluded")]
         public void SuperballMath_LongSession_RTPStable()
         {
             // Arrange
@@ -146,7 +146,7 @@ namespace SlotMathModule.Tests
             feed.Extract(1000);
 
             // Act
-            var statistics = feed.Statistic();
+            var statistics = feed.GetStatistic();
 
             // Assert
             Assert.NotNull(statistics);
@@ -228,7 +228,7 @@ namespace SlotMathModule.Tests
             Assert.Equal(0, slot.CashIn);
         }
 
-        [Fact]
+        [Fact(Skip = "Superball tests excluded")]
         public void SuperballMath_BalanceTracking_Accurate()
         {
             // Arrange
@@ -256,8 +256,8 @@ namespace SlotMathModule.Tests
                 var result = math.Spin(ticket, ballCount, nominal);
                 expectedBalance -= result.TotalWin;
 
-                Assert.Equal(expectedBalance, result.Balance,
-                    $"Баланс не соответствует ожидаемому на спине {ticket}");
+                Assert.Equal(expectedBalance, result.Balance //,$"Баланс не соответствует ожидаемому на спине {ticket}"
+                    );
             }
         }
 

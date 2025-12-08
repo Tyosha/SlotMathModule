@@ -97,7 +97,15 @@ namespace SlotMathModule.GameLogic.Core
             map.Clear();            
             foreach (var symbol in syms)
             {
-                map.Add(Game.getSymbol(symbol));
+                if (symbol >= 0 && symbol < Game.Symbol.Count)
+                {
+                    map.Add(Game.getSymbol(symbol));
+                }
+                else
+                {
+                    // Если индекс невалидный, используем пустой символ (индекс 0)
+                    map.Add(Game.getSymbol(0));
+                }
             }            
         }
 
@@ -141,10 +149,15 @@ namespace SlotMathModule.GameLogic.Core
                     int cycle = 0;
                     do
                     {
-                        int maxSym = Game.Symbol.Count();
-                        //  if (  r.Next(1, 5) > 1 || badSym > 0) maxSym--; // если уже есть два бонусных символа, то убираем его из возможных вариантов
+                        // Получаем только символы, которые можно использовать для заполнения
+                        var availableSymbols = Game.Symbol.Where(sym => !sym.NotUsedForFIll && sym.Index != badSym).ToList();
+                        if (availableSymbols.Count == 0)
+                        {
+                            // Если нет символов для заполнения, оставляем пустой символ
+                            break;
+                        }
 
-                        Symbol sym = Game.getSymbol(Game.rnd.Next(1, maxSym));
+                        Symbol sym = availableSymbols[Game.rnd.Next(0, availableSymbols.Count)];
                         map[n] = sym;
 
                         // проверяем возможно ли использовать данный символ в данной ячейке

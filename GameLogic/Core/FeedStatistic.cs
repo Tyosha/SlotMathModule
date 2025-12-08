@@ -39,7 +39,7 @@ namespace SlotMathModule.GameLogic.Core
                 s.PercentWin = s.AllWin * 100 / (CellCount * Game.Variants[l]);
                 s.BonusWin = FeedItem[l].Where(x => x.Bonus > 0).Sum(x => x.Win);
                 s.BonusWinCount = FeedItem[l].Where(x => x.Bonus > 0).Count();
-                s.BonusPercent = s.BonusWin * 100 / s.AllWin;
+                s.BonusPercent = s.AllWin > 0 ? s.BonusWin * 100 / s.AllWin : 0;
                 if (s.BonusWinCount > 0) s.MaxBonusWin = FeedItem[l].Where(x => x.Bonus > 0).Max(x => x.Win);
                 s.MaxWin = FeedItem[l].Where(x => x.Bonus == 0).Max(x => x.Win);
 

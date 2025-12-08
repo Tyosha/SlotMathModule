@@ -312,6 +312,59 @@ namespace SlotMathModule.Tests
                 $"RTP {rtp:F2}% не соответствует ожидаемому {feedParams.Percent}% (допуск ±5%)");
         }
 
+        [Theory]
+        [InlineData(1000)]
+        [InlineData(10000)]
+        [InlineData(100000)]
+        public void Slot_RTP_WithDifferentTicketCounts(long ticketCount)
+        {
+            // Arrange
+            var slot = CreateSlot();
+            var feedParams = new FeedExctractParam
+            {
+                FeedKey = 1000,
+                FeedNumber = 1000000,
+                TicketNumber = 1000000,
+                SegmentNumber = 0,
+                GameIndex = 0,
+                TicketCount = (int)ticketCount,
+                Nominal = 20,
+                Percent = 95,
+                PercentBonus = 30,
+                BonusGameMin = 30,
+                BonusGameMax = 500
+            };
+            
+            slot.ExtractFeed(feedParams);
+            slot.DoCashIn(10000000); // Большой баланс для точности
+            slot.Bet = 10;
+            slot.Lines = 1;
+            
+            // Количество спинов зависит от размера ленты, но не больше чем сама лента
+            int spinCount = Math.Min(10000, (int)(ticketCount * 100)); // 100 спинов на билет максимум
+            
+            // Act
+            for (int i = 0; i < spinCount; i++)
+            {
+                int result = slot.Spin(10, 1);
+                if (result != 0 && result != 301) // 301 - закончились сегменты
+                    break;
+            }
+
+            // Assert
+            double rtp = 0;
+            if (slot.CreditIn > 0)
+            {
+                rtp = (double)slot.CreditOut / slot.CreditIn * 100;
+            }
+
+            // RTP должен быть близок к заданному проценту (95%)
+            // Для больших лент допуск может быть меньше из-за большей статистики
+            double tolerance = ticketCount >= 10000 ? 3 : 5;
+            Assert.True(rtp >= feedParams.Percent - tolerance && rtp <= feedParams.Percent + tolerance,
+                $"RTP {rtp:F2}% для ленты из {ticketCount} билетов не соответствует ожидаемому {feedParams.Percent}% (допуск ±{tolerance}%)");
+        }
+
         [Fact]
         public void Slot_ScratchMode_Works()
         {

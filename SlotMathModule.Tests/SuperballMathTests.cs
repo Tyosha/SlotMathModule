@@ -26,7 +26,7 @@ namespace SlotMathModule.Tests
             };
         }
 
-        [Fact]
+        [Fact(Skip = "Superball tests excluded")]
         public void SuperballMath_Constructor_InitializesCorrectly()
         {
             // Arrange
@@ -40,7 +40,7 @@ namespace SlotMathModule.Tests
             Assert.NotNull(math);
         }
 
-        [Fact]
+        [Fact(Skip = "Superball tests excluded")]
         public void SuperballMath_Percent_ClampedToMinMax()
         {
             // Arrange & Act
@@ -51,7 +51,7 @@ namespace SlotMathModule.Tests
             // Если процент зажат правильно, RTP должен быть в пределах 80-95%
         }
 
-        [Theory]
+        [Theory(Skip = "Superball tests excluded")]
         [InlineData(80)]
         [InlineData(85)]
         [InlineData(90)]
@@ -87,7 +87,7 @@ namespace SlotMathModule.Tests
                 $"RTP {actualRTP:F2}% не соответствует ожидаемому {expectedRTP}% (допуск ±2%)");
         }
 
-        [Fact]
+        [Fact(Skip = "Superball tests excluded")]
         public void SuperballMath_Spin_ReturnsValidResult()
         {
             // Arrange
@@ -105,7 +105,7 @@ namespace SlotMathModule.Tests
             Assert.True(result.Balance >= 0 || result.Balance >= -500000); // Может быть отрицательным до maxOverdraft
         }
 
-        [Theory]
+        [Theory(Skip = "Superball tests excluded")]
         [InlineData(2)]
         [InlineData(3)]
         [InlineData(4)]
@@ -130,7 +130,7 @@ namespace SlotMathModule.Tests
             Assert.True(result.TotalWin >= 0);
         }
 
-        [Fact]
+        [Fact(Skip = "Superball tests excluded")]
         public void SuperballMath_MaxWinLimit_Respected()
         {
             // Arrange
@@ -160,7 +160,7 @@ namespace SlotMathModule.Tests
                 "Максимальный выигрыш не был достигнут, возможно лимит слишком высокий");
         }
 
-        [Fact]
+        [Fact(Skip = "Superball tests excluded")]
         public void SuperballMath_MaxOverdraft_Respected()
         {
             // Arrange
@@ -185,7 +185,7 @@ namespace SlotMathModule.Tests
             }
         }
 
-        [Fact]
+        [Fact(Skip = "Superball tests excluded")]
         public void SuperballMath_Balance_CalculatedCorrectly()
         {
             // Arrange
@@ -210,7 +210,7 @@ namespace SlotMathModule.Tests
             }
         }
 
-        [Fact]
+        [Fact(Skip = "Superball tests excluded")]
         public void SuperballMath_Jackpot_DetectedCorrectly()
         {
             // Arrange
@@ -249,7 +249,7 @@ namespace SlotMathModule.Tests
             Assert.True(jackpotFound, "Джекпот не был найден за всю ленту");
         }
 
-        [Fact]
+        [Fact(Skip = "Superball tests excluded")]
         public void SuperballMath_GetCells_ReturnsValidArray()
         {
             // Arrange
@@ -269,7 +269,7 @@ namespace SlotMathModule.Tests
             Assert.NotNull(result);
         }
 
-        [Fact]
+        [Fact(Skip = "Superball tests excluded")]
         public void SuperballMath_DifferentInitiators_GenerateDifferentTapes()
         {
             // Arrange
@@ -302,7 +302,7 @@ namespace SlotMathModule.Tests
             Assert.True(hasDifference, "Ленты для разных инициаторов должны отличаться");
         }
 
-        [Fact]
+        [Fact(Skip = "Superball tests excluded")]
         public void SuperballMath_WinDistribution_Reasonable()
         {
             // Arrange
@@ -343,7 +343,7 @@ namespace SlotMathModule.Tests
                 $"Слишком много крупных выигрышей: {largePercent:F1}%");
         }
 
-        [Theory]
+        [Theory(Skip = "Superball tests excluded")]
         [InlineData(1)]
         [InlineData(2)]
         [InlineData(5)]

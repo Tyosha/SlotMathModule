@@ -252,8 +252,8 @@ namespace SlotMathModule.Tests
                     var uniqueIndices = indices.Distinct().ToList();
                     
                     // Все индексы должны быть уникальными
-                    Assert.Equal(indices.Count, uniqueIndices.Count,
-                        "Индексы выигрышей должны быть уникальными");
+                    Assert.Equal(indices.Count, uniqueIndices.Count//, "Индексы выигрышей должны быть уникальными"
+                                                                   );
                 }
             }
         }

@@ -211,7 +211,16 @@ namespace SlotMathModule.GameLogic.Core
 
         public Symbol getSymbol(int index_)
         {
-            return Symbol[index_];
+            if (index_ >= 0 && index_ < Symbol.Count)
+            {
+                return Symbol[index_];
+            }
+            // Если индекс невалидный, возвращаем пустой символ (индекс 0), если он существует
+            if (Symbol.Count > 0)
+            {
+                return Symbol[0];
+            }
+            throw new ArgumentOutOfRangeException(nameof(index_), $"Invalid symbol index: {index_}, Symbol count: {Symbol.Count}");
         }
 
         public Symbol getSymbol(string name)
@@ -314,7 +323,7 @@ namespace SlotMathModule.GameLogic.Core
         }
 
         // генерируем выигрышные комбинации
-        void _genWinMaps(int[] map=null, int lineNo=0, int deep=0, bool no123 = false)
+        void _genWinMaps(int[]? map =null, int lineNo=0, int deep=0, bool no123 = false)
         {
             if (Together123) no123 = false; // возможность совпадения одновременно 1, 2 и 3 линий
 

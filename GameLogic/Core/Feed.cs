@@ -67,7 +67,7 @@ namespace SlotMathModule.GameLogic.Core
         
         public int BuyTicket(long ticketNumber)
         {
-            if (CurTicket < FeedNumber + TicketCount)
+            if (ticketNumber >= FeedNumber && ticketNumber < FeedNumber + TicketCount)
             {
                 CurTicket = ticketNumber;
                 CurSeqment = 0;
@@ -80,6 +80,11 @@ namespace SlotMathModule.GameLogic.Core
         public FeedItem GetNextFeedItem(int lineCount_, int bet)
         {
             int varInd = Array.IndexOf(Game.Variants, lineCount_);
+            
+            if (varInd < 0 || varInd >= FeedItem.Length || FeedItem[varInd] == null)
+            {
+                return null; // Неверный вариант или лента не инициализирована
+            }
 
             FeedItem result = new FeedItem();
 
@@ -228,18 +233,20 @@ namespace SlotMathModule.GameLogic.Core
                 int[] indexes = new int[CellCount];
                 for (int i = 0; i < CellCount; i++) indexes[i] = i;
 
+                // Получаем список доступных индексов для более эффективного распределения
+                var availableIndexes = indexes.Where(x => x >= 0).ToList();
+                
                 int num = 0;
                 foreach (var feedItem in FeedItem[varInd])
                 {
-                    int ind;
-                    do
-                    {
-                        ind = indexes[rnd.Next(0, indexes.Count())];
-                        if (ind > -1) indexes[ind] = -1;
-
-                    } while (ind < 0); // && cnt < 1000);
-
+                    if (availableIndexes.Count == 0) break; // Нет доступных индексов
+                    
+                    int randomIndex = rnd.Next(0, availableIndexes.Count);
+                    int ind = availableIndexes[randomIndex];
+                    availableIndexes.RemoveAt(randomIndex); // Удаляем использованный индекс
+                    
                     feedItem.Index = ind;
+                    indexes[ind] = -1; // Помечаем как использованный
 
                     num++;
                     if (num > CellCount - 100) break;
