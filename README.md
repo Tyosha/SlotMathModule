@@ -57,6 +57,26 @@
 - .NET Framework 2.0+
 - Newtonsoft.Json (для SuperBall)
 
+## Краткая архитектура
+
+- `Slot` — фасад игрового цикла и экономики: управляет кредитами, ставками (`Bet`, `Lines`), состояниями спина/бонуса, запрашивает у `Feed` элемент ленты (`FeedItem`) и просит `Game` выдать карту(ы) (`Map`) под этот элемент.
+- `Game` — абстракция конкретной математики: определяет линии (`Line`), символы (`Symbol`), параметры (`MapSize`, `MaxLine`, `Variants`, `Scatter`, `Wild`, правила — `OneSymAtColumn`, `WinlineTwoDirection`, `PercentBonus`, `BonusGameMin/Max`). Генерирует пул выигрышных карт (`WinMapList`/`AllowWins`) и выдает карту по выигрышу: `GetMapByFeedItem(...)`.
+- `Map` — состояние барабанов/ячейки: хранит символы, находит выигрыши (`DefineWinLine()`), считает выплату `Win(lineCount, bet)`, достраивает незаполненные ячейки без изменения выигрыша (`FillMap(...)`).
+- `Line` — маршрут ячеек; `AddToMapIfWin(map)` находит совпадения слева‑направо и, опционально, справа‑налево.
+- `WinLine` / `ScatterWinLine` — найденные выигрыши по линиям/скаттеру.
+- `Symbol` — имя, индекс, таблица выплат `Wins[5]`, флаг `NotUsedForFill`.
+- `Feed` — «лента» выигрышей с заданным RTP: раскладывает выигрыши по ячейкам билета (`Ticket` × 100 сегментов → `CurCell`), возвращает `FeedItem` для текущего сегмента (`GetNextFeedItem(...)`). Поддерживаются тестовые режимы `FeedFake` и фильтр ограничений `ConstraintFilter`.
+
+Поток `Spin` (основное):
+1) Если нет подготовленных карт, `Slot` берёт `feedItem = Feed.GetNextFeedItem(Lines, Bet)` и вызывает `Game.GetMapByFeedItem(feedItem, Lines, Bet)` → список `Map`.
+2) Берёт первую карту, считает `CurWin = Map.Win(Lines, Bet)`, применяет бонус‑логику (счётчики `BonusGameRemain`, `BonusWin`) и обновляет кредиты/статистику.
+
+Расширение — новая игра:
+- Создать класс, наследующий `Game`, пометить `[GameIdentity(true)]`.
+- Переопределить `CreateLines()` (задать `MapSize`, `MaxLine`, добавить `Line`) и `CreateSymbol()` (добавить `Symbol`, настроить `Wild`/`Scatter`).
+- Реализовать `GetMapByFeedItem(...)` (часто достаточно `GetMapByWin(...).FillMap(...)`).
+- При необходимости настроить правила (`WinlineTwoDirection`, `OneSymAtColumn`, `IsValidSymbolPlaceOnFillMap`, `PostProcessWinLine`, и др.).
+
 Как работает текущая математика
 1. Система символов
 Математика работает с символами (Symbol), которые абстрактны. Каждый символ имеет:
